@@ -12,6 +12,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@confio/relayer": "0.1.1",
     "@cosmjs/crypto": "0.24.1",
     "@cosmjs/encoding": "0.24.1",
     "@cosmjs/proto-signing": "0.24.1",

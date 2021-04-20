@@ -1,0 +1,14 @@
+syntax = "proto3";
+package chain.mpatest.mpa;
+
+// this line is used by starport scaffolding # genesis/proto/import
+import "mpa/position.proto";
+
+option go_package = "github.com/chain/mpatest/x/mpa/types";
+
+// GenesisState defines the mpa module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+		repeated Position positionList = 1; // this line is used by starport scaffolding # genesis/proto/stateField
+    // this line is used by starport scaffolding # ibc/genesis/proto
+}

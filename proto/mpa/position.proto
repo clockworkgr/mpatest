@@ -1,0 +1,13 @@
+syntax = "proto3";
+package chain.mpatest.mpa;
+
+option go_package = "github.com/chain/mpatest/x/mpa/types";
+
+import "gogoproto/gogo.proto";
+
+message Position {
+  string creator = 1;
+  uint64 id = 2;
+  int32 collateral = 3; 
+  int32 supply = 4; 
+}

@@ -1,0 +1,39 @@
+syntax = "proto3";
+package chain.mpatest.mpa;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+// this line is used by starport scaffolding # 1
+import "mpa/position.proto";
+
+option go_package = "github.com/chain/mpatest/x/mpa/types";
+
+// Query defines the gRPC querier service.
+service Query {
+    // this line is used by starport scaffolding # 2
+	rpc Position(QueryGetPositionRequest) returns (QueryGetPositionResponse) {
+		option (google.api.http).get = "/chain/mpatest/mpa/position/{id}";
+	}
+	rpc PositionAll(QueryAllPositionRequest) returns (QueryAllPositionResponse) {
+		option (google.api.http).get = "/chain/mpatest/mpa/position";
+	}
+
+}
+
+// this line is used by starport scaffolding # 3
+message QueryGetPositionRequest {
+	uint64 id = 1;
+}
+
+message QueryGetPositionResponse {
+	Position Position = 1;
+}
+
+message QueryAllPositionRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPositionResponse {
+	repeated Position Position = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

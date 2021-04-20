@@ -82,7 +82,11 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
+	"github.com/chain/mpatest/x/mpa"
+	mpakeeper "github.com/chain/mpatest/x/mpa/keeper"
+	mpatypes "github.com/chain/mpatest/x/mpa/types"
 	"github.com/chain/mpatest/x/mpatest"
 	mpatestkeeper "github.com/chain/mpatest/x/mpatest/keeper"
 	mpatesttypes "github.com/chain/mpatest/x/mpatest/types"
@@ -132,6 +136,7 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
+		mpa.AppModuleBasic{},
 		mpatest.AppModuleBasic{},
 	)
 
@@ -144,6 +149,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		mpatypes.ModuleName:            {authtypes.Minter, authtypes.Burner},
 	}
 )
 
@@ -200,6 +206,8 @@ type App struct {
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
+	mpaKeeper mpakeeper.Keeper
+
 	mpatestKeeper mpatestkeeper.Keeper
 
 	// the module manager
@@ -230,6 +238,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
+		mpatypes.StoreKey,
 		mpatesttypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -322,6 +331,15 @@ func New(
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
+	app.mpaKeeper = *mpakeeper.NewKeeper(
+		appCodec,
+		keys[mpatypes.StoreKey],
+		keys[mpatypes.MemStoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
+	mpaModule := mpa.NewAppModule(appCodec, app.mpaKeeper)
+
 	app.mpatestKeeper = *mpatestkeeper.NewKeeper(
 		appCodec,
 		keys[mpatesttypes.StoreKey],
@@ -370,6 +388,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
+		mpaModule,
 		mpatestModule,
 	)
 
@@ -404,6 +423,7 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
+		mpatypes.ModuleName,
 		mpatesttypes.ModuleName,
 	)
 
@@ -481,6 +501,8 @@ func (app *App) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+		app.Logger().Info(acc)
+		app.Logger().Info(authtypes.NewModuleAddress(acc).String())
 	}
 
 	return modAccAddrs
@@ -587,6 +609,7 @@ func initParamsKeeper(appCodec codec.BinaryMarshaler, legacyAmino *codec.LegacyA
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
+	paramsKeeper.Subspace(mpatypes.ModuleName)
 	paramsKeeper.Subspace(mpatesttypes.ModuleName)
 
 	return paramsKeeper

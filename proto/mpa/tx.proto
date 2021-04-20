@@ -1,0 +1,41 @@
+syntax = "proto3";
+package chain.mpatest.mpa;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/chain/mpatest/x/mpa/types";
+
+// Msg defines the Msg service.
+service Msg {
+    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreatePosition(MsgCreatePosition) returns (MsgCreatePositionResponse);
+  rpc UpdatePosition(MsgUpdatePosition) returns (MsgUpdatePositionResponse);
+  rpc DeletePosition(MsgDeletePosition) returns (MsgDeletePositionResponse);
+}
+
+// this line is used by starport scaffolding # proto/tx/message
+message MsgCreatePosition {
+  string creator = 1;
+  int32 collateral = 2;
+  int32 supply = 3;
+}
+
+message MsgCreatePositionResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdatePosition {
+  string creator = 1;
+  uint64 id = 2;
+  int32 collateral = 3;
+  int32 supply = 4;
+}
+
+message MsgUpdatePositionResponse { }
+
+message MsgDeletePosition {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeletePositionResponse { }
